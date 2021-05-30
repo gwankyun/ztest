@@ -40,9 +40,6 @@ export
             std::shared_ptr<Impl> impl;
         };
 
-        inline Test& get()
-        {
-            return Test::defaultTester;
-        }
+        Test& get();
     }
 }

@@ -15,7 +15,6 @@ namespace ztest
         bool checked = false;
     };
 
-    //Test::defaultTester;
     Test Test::defaultTester;
 
     Case::Case()
@@ -91,5 +90,10 @@ namespace ztest
         }
 
         impl->checked = true;
+    }
+
+    Test& get()
+    {
+        return Test::defaultTester;
     }
 }
