@@ -15,3 +15,7 @@
 #ifndef REQUIRE
 #  define REQUIRE(_expr) ztest::get().require(EXPR(_expr))
 #endif
+
+#ifndef TEST_CASE
+#  define TEST_CASE(_name, _group) ztest::testCase(_name);
+#endif

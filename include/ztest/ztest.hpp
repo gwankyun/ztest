@@ -5,7 +5,9 @@
 #include <vector>
 #include <iostream>
 #include <map>
+#include "module.h"
 
+EXPORT_BEGIN
 namespace ztest
 {
     class Case
@@ -123,3 +125,4 @@ namespace ztest
         get().addCase(_case);
     }
 }
+EXPORT_END

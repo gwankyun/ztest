@@ -5,10 +5,10 @@
 #endif
 
 #if !USE_MODULE
-#  include "ztest.hpp"
+#  include "ztest/ztest.hpp"
 #endif
 
-#include "macro.h"
+#include "ztest/macro.h"
 
 module main;
 
@@ -18,14 +18,18 @@ module main;
 
 int main()
 {
-    ztest::testCase("add");
-    REQUIRE(1 + 1 == 2);
-    REQUIRE(1 + 1 == 3);
-    REQUIRE(1 + 1 == 4);
+    TEST_CASE("add", "ztest")
+    {
+        REQUIRE(1 + 1 == 2);
+        REQUIRE(1 + 1 == 3);
+        REQUIRE(1 + 1 == 4);
+    }
 
-    ztest::testCase("minus");
-    REQUIRE(1 - 1 == 0);
-    REQUIRE(2 - 1 == 1);
+    TEST_CASE("minus", "ztest")
+    {
+        REQUIRE(1 - 1 == 0);
+        REQUIRE(2 - 1 == 1);
+    }
 
     return 0;
 }
