@@ -14,15 +14,27 @@ namespace ztest
     {
     public:
         Case()
-            : impl(std::make_shared<Impl>())
+            : impl(NULL)
+            //: impl(std::make_shared<Impl>())
         {
+            impl = new Impl();
         }
 
-        ~Case() = default;
+        ~Case()
+        {
+            if (impl != NULL)
+            {
+                delete impl;
+                impl = NULL;
+            }
+        };
 
         void require(const std::pair<std::string, bool>& _tuple)
         {
-            impl->m_case.push_back(_tuple);
+            if (impl != NULL)
+            {
+                impl->m_case.push_back(_tuple);
+            }
         }
 
         bool check(bool _show = true)
@@ -54,7 +66,8 @@ namespace ztest
             std::vector<std::pair<std::string, bool>> m_case;
         };
 
-        std::shared_ptr<Impl> impl;
+        //std::shared_ptr<Impl> impl;
+        Impl* impl;
     };
 
     class Test
@@ -120,7 +133,7 @@ namespace ztest
         return defaultTester;
     }
 
-    void testCase(const char* _case)
+    inline void testCase(const char* _case)
     {
         get().addCase(_case);
     }

@@ -26,8 +26,14 @@ set(target ztest)
 
 add_library(${target} INTERFACE)
 
+add_library(${target}_MODULE INTERFACE)
+
+set_target_properties(${target} PROPERTIES
+  INTERFACE_SOURCES "$<INSTALL_INTERFACE:include/ztest/ztest.cppm>"
+)
+
 # install the target and create export-set
-install(TARGETS ${target}
+install(TARGETS ${target} ${target}_MODULE
   EXPORT ${target}Targets
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
@@ -94,12 +100,13 @@ target_sources(${main}
     src/main.cpp
     src/main.cppm
     include/ztest/macro.h
+    include/ztest/module.h
     include/ztest/ztest.cppm
     include/ztest/ztest.hpp
 )
 
 # 設置C++標準
-# target_compile_features(${main} PRIVATE cxx_std_20)
+target_compile_features(${main} PRIVATE cxx_std_20)
 
 # 引用目錄
 target_include_directories(${main} PRIVATE include)
