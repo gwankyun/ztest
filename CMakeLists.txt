@@ -33,7 +33,7 @@ set_target_properties(${target} PROPERTIES
 )
 
 # install the target and create export-set
-install(TARGETS ${target} ${target}_MODULE
+install(TARGETS ${target}
   EXPORT ${target}Targets
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
@@ -106,7 +106,7 @@ target_sources(${main}
 )
 
 # 設置C++標準
-target_compile_features(${main} PRIVATE cxx_std_20)
+# target_compile_features(${main} PRIVATE cxx_std_20)
 
 # 引用目錄
 target_include_directories(${main} PRIVATE include)
