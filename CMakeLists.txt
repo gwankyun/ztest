@@ -2,6 +2,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 option(USE_MODULE "" ON)
+option(ENABLE_ZTEST_TEST "" OFF)
 
 # 項目名
 set(project ztest)
@@ -26,10 +27,19 @@ set(target ztest)
 
 add_library(${target} INTERFACE)
 
-add_library(${target}_MODULE INTERFACE)
-
 set_target_properties(${target} PROPERTIES
   INTERFACE_SOURCES "$<INSTALL_INTERFACE:include/ztest/ztest.cppm>"
+)
+
+target_include_directories(${target}
+  INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+
+target_sources(${target}
+  INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/ztest/ztest.cppm>
 )
 
 # install the target and create export-set
@@ -92,24 +102,26 @@ export(EXPORT ${target}Targets
 )
 ## 庫結束
 
-# 添加可執行文件
-set(main main)
-add_executable(${main})
-target_sources(${main}
-  PRIVATE
-    src/main.cpp
-    src/main.cppm
-    include/ztest/macro.h
-    include/ztest/module.h
-    include/ztest/ztest.cppm
-    include/ztest/ztest.hpp
-)
+if(ENABLE_ZTEST_TEST)
+  # 添加可執行文件
+  set(main main)
+  add_executable(${main})
+  target_sources(${main}
+    PRIVATE
+      src/main.cpp
+      src/main.cppm
+      include/ztest/macro.h
+      include/ztest/module.h
+      include/ztest/ztest.cppm
+      include/ztest/ztest.hpp
+  )
 
-# 設置C++標準
-# target_compile_features(${main} PRIVATE cxx_std_20)
+  # 設置C++標準
+  target_compile_features(${main} PRIVATE cxx_std_20)
 
-# 引用目錄
-target_include_directories(${main} PRIVATE include)
+  # 引用目錄
+  target_include_directories(${main} PRIVATE include)
 
-# 設置宏
-target_compile_definitions(${main} PRIVATE USE_MODULE=$<BOOL:${USE_MODULE}>)
+  # 設置宏
+  target_compile_definitions(${main} PRIVATE USE_MODULE=$<BOOL:${USE_MODULE}>)
+endif()
