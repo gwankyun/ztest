@@ -19,88 +19,33 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
+set(CMAKE_MODULE_PATH
+  ${CMAKE_MODULE_PATH}
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+include(common)
+
 # 編譯器選項
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/W4;/MP;/Zc:__cplusplus;/std:c17;/experimental:module;>")
 
-## 庫開始
 set(target ztest)
 
 add_library(${target} INTERFACE)
 
-set_target_properties(${target} PROPERTIES
-  INTERFACE_SOURCES "$<INSTALL_INTERFACE:include/ztest/ztest.cppm>"
-)
+include(GNUInstallDirs)
 
 target_include_directories(${target}
   INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 
 target_sources(${target}
   INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/ztest/ztest.cppm>
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/ztest/ztest.cppm>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/ztest/ztest.cppm>"
 )
 
-# install the target and create export-set
-install(TARGETS ${target}
-  EXPORT ${target}Targets
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin
-  INCLUDES DESTINATION include
-)
-
-# install header file
-install(DIRECTORY include/ztest DESTINATION include)
-
-# generate and install export file
-install(EXPORT ${target}Targets
-  FILE ${target}Targets.cmake
-  NAMESPACE ${target}::
-  DESTINATION lib/cmake/${target}
-)
-
-# include CMakePackageConfigHelpers macro
-include(CMakePackageConfigHelpers)
-
-# set version
-set(version 0.0.1)
-
-set_property(TARGET ${target} PROPERTY VERSION ${version})
-set_property(TARGET ${target} PROPERTY SOVERSION 0)
-set_property(TARGET ${target} PROPERTY
-  INTERFACE_${target}_MAJOR_VERSION 0)
-set_property(TARGET ${target} APPEND PROPERTY
-  COMPATIBLE_INTERFACE_STRING ${target}_MAJOR_VERSION
-)
-
-# generate the version file for the config file
-write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/${target}ConfigVersion.cmake"
-  VERSION "${version}"
-  COMPATIBILITY AnyNewerVersion
-)
-
-# create config file
-configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${target}Config.cmake.in
-  "${CMAKE_CURRENT_BINARY_DIR}/${target}Config.cmake"
-  INSTALL_DESTINATION lib/cmake/${target}
-)
-
-# install config files
-install(FILES
-  "${CMAKE_CURRENT_BINARY_DIR}/${target}Config.cmake"
-  "${CMAKE_CURRENT_BINARY_DIR}/${target}ConfigVersion.cmake"
-  DESTINATION lib/cmake/${target}
-)
-
-# generate the export targets for the build tree
-export(EXPORT ${target}Targets
-  FILE "${CMAKE_CURRENT_BINARY_DIR}/cmake/${target}Targets.cmake"
-  NAMESPACE ${target}::
-)
-## 庫結束
+target_install(${target} 0 0 1)
 
 if(ENABLE_ZTEST_TEST)
   # 添加可執行文件
