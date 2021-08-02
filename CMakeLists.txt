@@ -14,6 +14,9 @@ include(CMakePrintHelpers)
 # 啟用IDE目錄功能
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+string(REGEX MATCH "^([0-9]+)\..*" out "123.1.0")
+cmake_print_variables(CMAKE_MATCH_1)
+
 # 輸出目錄
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
@@ -33,6 +36,8 @@ add_library(${target} INTERFACE)
 
 include(GNUInstallDirs)
 
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ztest" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+
 target_include_directories(${target}
   INTERFACE
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
@@ -45,7 +50,7 @@ target_sources(${target}
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/ztest/ztest.cppm>"
 )
 
-target_install(${target} 0 0 1)
+target_install(${target} "0.0.1")
 
 if(ENABLE_ZTEST_TEST)
   # 添加可執行文件

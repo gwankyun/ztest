@@ -1,4 +1,4 @@
-function(target_install target v1 v2 v3)
+function(target_install target ver)
   include(GNUInstallDirs)
 
   # install the target and create export-set
@@ -11,7 +11,7 @@ function(target_install target v1 v2 v3)
   )
 
   # install header file
-  install(DIRECTORY include/ztest DESTINATION include)
+  # install(DIRECTORY include/ztest DESTINATION include)
 
   # generate and install export file
   install(EXPORT ${target}Targets
@@ -23,18 +23,11 @@ function(target_install target v1 v2 v3)
   # include CMakePackageConfigHelpers macro
   include(CMakePackageConfigHelpers)
 
+  string(REGEX MATCH "^([0-9]+)\..*" v1 ver)
+
   # set version
-  # set(version 0.0.1)
-
-  # set_property(TARGET ${target} PROPERTY VERSION ${version})
-  # set_property(TARGET ${target} PROPERTY SOVERSION 0)
-  # set_property(TARGET ${target} PROPERTY
-  #   INTERFACE_${target}_MAJOR_VERSION 0)
-  # set_property(TARGET ${target} APPEND PROPERTY
-  #   COMPATIBLE_INTERFACE_STRING ${target}_MAJOR_VERSION
-  # )
-
-  set(version ${v1}.${v2}.${v3})
+  set(version ${ver})
+  set(v1 CMAKE_MATCH_1)
 
   set_property(TARGET ${target} PROPERTY VERSION ${version})
   set_property(TARGET ${target} PROPERTY SOVERSION ${v1})
