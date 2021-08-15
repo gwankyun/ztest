@@ -4,11 +4,11 @@
 #  define USE_MODULE 1
 #endif
 
-#if !USE_MODULE
+#if USE_MODULE
+#  include "ztest/macro.h"
+#else
 #  include "ztest/ztest.hpp"
 #endif
-
-#include "ztest/macro.h"
 
 module main;
 

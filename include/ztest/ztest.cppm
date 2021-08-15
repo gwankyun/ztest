@@ -1,11 +1,36 @@
 module;
 #include "module.h"
+#include <Windows.h>
 export module ztest;
 import std.core;
 
 EXPORT_BEGIN
 namespace ztest
 {
+#ifndef ZTEST_COLOR
+#  if defined(_WIN32) && !defined(WINCE)
+#    define ZTEST_COLOR 1
+#  else
+#    define ZTEST_COLOR 0
+#  endif
+#endif
+
+#if ZTEST_COLOR
+    struct ConsoleTextAttribute
+    {
+        ConsoleTextAttribute(HANDLE handle, WORD attribute)
+            : m_handle(handle)
+        {
+            SetConsoleTextAttribute(handle, attribute);
+        }
+        ~ConsoleTextAttribute()
+        {
+            SetConsoleTextAttribute(m_handle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+        }
+        HANDLE m_handle;
+    };
+#endif
+
     class Case
     {
     public:
@@ -31,7 +56,11 @@ namespace ztest
                     ret = false;
                     if (_show)
                     {
-                        std::cout << "  " << i.first << " failed" << std::endl;
+                        {
+                            ConsoleTextAttribute textAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED);
+                            std::cout << "  failed ";
+                        }
+                        std::cout << i.first << std::endl;
                     }
                     else
                     {
@@ -89,6 +118,7 @@ namespace ztest
                 auto result = i.second.check(false);
                 if (result)
                 {
+                    ConsoleTextAttribute textAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN);
                     std::cout << "  passed" << std::endl;
                 }
                 else
